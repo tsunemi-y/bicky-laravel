@@ -45,7 +45,7 @@ class GoogleCalendarController extends Controller
         //権限の指定
         $client->setScopes(Google_Service_Calendar::CALENDAR_EVENTS);
         //JSONファイルの指定
-        $client->setAuthConfig(storage_path('bicky-347713-47d82b536dcd.json'));
+        $client->setAuthConfig(storage_path('app/api-key/bicky-347713-47d82b536dcd.json'));
 
         return $client;
     }
