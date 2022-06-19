@@ -26,21 +26,30 @@ Route::get('/line/sendReservation', [LineMessengerController::class, 'sendReserv
 
 // ===============ユーザー画面　ここから============
 
+// トップ画面
 Route::get('/', function () {
     return view('pages.top');
 })->name('top');
 
+// ご挨拶画面
 Route::get('greeting', function () {
     return view('pages.greeting');
 })->name('greeting');
 
+// アクセス画面
 Route::get('access', function () {
     return view('pages.access');
 })->name('access');
 
+// 訓練内容画面
 Route::get('overview', function () {
     return view('pages.overview');
 })->name('overview');
+
+// 遠方の方へ画面
+Route::get('remote', function () {
+    return view('pages.remote');
+})->name('remote');
 
 // 料金画面
 Route::get('fee', [FeeController::class, 'index'])->name('fee');
