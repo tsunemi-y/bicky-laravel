@@ -92,7 +92,9 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        $fee = $this->getFeeByCourse((int) $data['numberOfUse'], (int) $data['coursePlan'], $data['childName2']);
+        if (empty($data['lineConsultation'])) $data['lineConsultation'] = false;
+        
+        $fee = $this->getFeeByCourse((int) $data['numberOfUse'], (int) $data['coursePlan'], $data['childName2'], $data['lineConsultation']);
         $useTime = $this->getUseTimeByFee($fee);
 
         // 利用時2未入力時は、gender2をnullに設定
@@ -100,25 +102,26 @@ class RegisterController extends Controller
         if (empty($data['childName2'])) $data['gender2'] = null;
 
         $user = User::create([
-            'parentName'   => $data['parentName'],
-            'email'        => $data['email'],
-            'tel'          => $data['tel'],
-            'password'     => Hash::make($data['password']),
-            'childName'    => $data['childName'],
-            'age'          => $data['age'],
-            'gender'       => $data['gender'],
-            'diagnosis'    => $data['diagnosis'],
-            'childName2'   => $data['childName2'],
-            'age2'         => $data['age2'],
-            'gender2'      => $data['gender2'],
-            'diagnosis2'   => $data['diagnosis2'],
-            'address'      => $data['address'],
-            'introduction' => $data['introduction'],
-            'coursePlan'   => $data['coursePlan'],
-            'consaltation' => $data['consaltation'],
-            'fee'          => $fee,
-            'userAgent'    => $_SERVER['HTTP_USER_AGENT'],
-            'use_time'     => $useTime,
+            'parentName'                 => $data['parentName'],
+            'email'                      => $data['email'],
+            'tel'                        => $data['tel'],
+            'password'                   => Hash::make($data['password']),
+            'childName'                  => $data['childName'],
+            'age'                        => $data['age'],
+            'gender'                     => $data['gender'],
+            'diagnosis'                  => $data['diagnosis'],
+            'childName2'                 => $data['childName2'],
+            'age2'                       => $data['age2'],
+            'gender2'                    => $data['gender2'],
+            'diagnosis2'                 => $data['diagnosis2'],
+            'address'                    => $data['address'],
+            'introduction'               => $data['introduction'],
+            'coursePlan'                 => $data['coursePlan'],
+            'consaltation'               => $data['consaltation'],
+            'fee'                        => $fee,
+            'userAgent'                  => $_SERVER['HTTP_USER_AGENT'],
+            'use_time'                   => $useTime,
+            'line_consultation_flag'     => $data['lineConsultation'],
         ]);
 
         $lineModel = new LineMessengerController();
@@ -155,10 +158,14 @@ class RegisterController extends Controller
      * @param Integer　 利用人数
      * @param Integer　 コースプラン
      * @param Integer　 兄弟児利用
+     * @param Boolean　 ラインのみ利用フラグ
      * @return Integer 料金
      */
-    private function getFeeByCourse($numberOfUse, $coursePlan, $siblingUse)
+    private function getFeeByCourse($numberOfUse, $coursePlan, $siblingUse, $lineConsultation)
     {
+        // LINEのみ相談
+        if ($lineConsultation) return ConstUser::FEE_LINE_ONLY;
+
         if ($numberOfUse === ConstUser::ONE_USE) {
             if (!empty($siblingUse)) return ConstUser::FEE_ONE_SIBLING;
             if ($coursePlan === ConstUser::COURSE_WEEKDAY) return ConstUser::FEE_ONE_WEEKDAY;
@@ -176,7 +183,7 @@ class RegisterController extends Controller
      * @return Integer 料金
      */
     private function getUseTimeByFee($fee)
-    {
+    { 
         if ($fee === ConstUser::FEE_ONE_SIBLING || $fee === ConstUser::FEE_TWO_SIBLING) {
             return ConstUser::LONG_USE_TIME;
         } else {

@@ -13,6 +13,7 @@ class ConstUser
     public const COURSE_HOLIDAY = 2; // 休日
 
     // コース別料金
+    public const FEE_LINE_ONLY = 4400;  // LINEのみ相談
     public const FEE_ONE_WEEKDAY = 7700;  // 月1回平日
     public const FEE_ONE_HOLIDAY = 8800;  // 月1回休日
     public const FEE_ONE_SIBLING = 13200; // 月1回兄弟

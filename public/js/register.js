@@ -30,6 +30,20 @@ function onHandleChangeChildName2(targetEventElementVal, targetElementList) {
       targetInputElementList[_i2].val('');
     }
   }
-}
+} // LINE相談のみにチェック時、他の選択肢を非表示
+
+
+$('#line').click(function () {
+  var $numberOfUse = $('#numberOfUse');
+  var $coursePlan = $('#coursePlan');
+
+  if ($(this).prop("checked") == true) {
+    $numberOfUse.hide();
+    $coursePlan.hide();
+  } else {
+    $numberOfUse.show();
+    $coursePlan.show();
+  }
+});
 /******/ })()
 ;

@@ -38,6 +38,7 @@ class User extends Authenticatable
         'fee',
         'userAgent',
         'use_time',
+        'line_consultation_flag',
     ];
 
     /**

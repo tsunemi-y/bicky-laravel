@@ -10,6 +10,7 @@ if (!function_exists('convertCourseFeeToName')) {
     function convertCourseFeeToName($fee)
     {
         $coursePlanList = [
+            4400  => 'LINEのみ',
             7700  => '月1回平日',
             8800  => '月1回休日',
             13200 => '月1回兄弟',

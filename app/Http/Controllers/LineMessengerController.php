@@ -97,7 +97,7 @@ class LineMessengerController extends Controller
         if (!empty($user->consaltation)) $message .= "相談内容：　$user->consaltation" . "\n";
         $message .= "ご利用プラン：　{$coursePlan}" . "\n";
         $message .= "料金：　$user->fee";
-
+        
         $this->sendMessage($userId, $message);
     }
 }

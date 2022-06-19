@@ -26,8 +26,8 @@
 
                     <div class="mb-3">
                         <label for="email" class="form-label">メールアドレス<span class="text-danger">【必須】</span></label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com"
-                            value="{{ old('email') }}">
+                        <input type="email" class="form-control" id="email" name="email"
+                            placeholder="name@example.com" value="{{ old('email') }}">
                         @if ($errors->has('email'))
                             <div class="error text-danger">
                                 <p>{{ $errors->first('email') }}</p>
@@ -91,7 +91,8 @@
                     <div class="mb-3">
                         <label for="gender" class="form-label d-block">性別<span class="text-danger">【必須】</span></label>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="gender" id="male" value="男の子" checked>
+                            <input class="form-check-input" type="radio" name="gender" id="male" value="男の子"
+                                checked>
                             <label class="form-check-label" for="male">
                                 男の子
                             </label>
@@ -146,13 +147,15 @@
                     <div class="mb-3 d-none" id="gender2">
                         <label for="gender2" class="form-label d-block">性別2<span class="text-danger">【必須】</span></label>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="gender2" id="male2" value="男の子" checked>
+                            <input class="form-check-input" type="radio" name="gender2" id="male2" value="男の子"
+                                checked>
                             <label class="form-check-label" for="male2">
                                 男の子
                             </label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="gender2" id="female2" value="女の子">
+                            <input class="form-check-input" type="radio" name="gender2" id="female2"
+                                value="女の子">
                             <label class="form-check-label" for="female2">
                                 女の子
                             </label>
@@ -203,8 +206,18 @@
                     <div class="mb-3">
                         <label class="form-label d-block">ご利用プラン<span class="text-danger">【必須】</span></label>
 
-                        {{-- 利用回数 --}}
+                        {{-- LINE相談 --}}
                         <div class="mb-1">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" name="lineConsultation" id="line" value="1">
+                                <label class="form-check-label" for="line">
+                                    LINE相談のみ
+                                </label>
+                            </div>
+                        </div>
+
+                        {{-- 利用回数 --}}
+                        <div class="mb-1" id="numberOfUse">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="numberOfUse" id="one" value="1" checked>
                                 <label class="form-check-label" for="one">
@@ -221,10 +234,9 @@
                         </div>
 
                         {{-- コースタイプ選択 --}}
-                        <div>
+                        <div id="coursePlan">
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="coursePlan" id="weekday" value="1"
-                                    checked>
+                                <input class="form-check-input" type="radio" name="coursePlan" id="weekday" value="1" checked>
                                 <label class="form-check-label" for="weekday">
                                     平日利用
                                 </label>
@@ -247,8 +259,8 @@
 
                     <div class="mb-3">
                         <label for="introduction" class="form-label">紹介先</label>
-                        <input type="text" class="form-control" id="introduction" name="introduction" placeholder="〇〇区役所"
-                            value="{{ old('introduction') }}">
+                        <input type="text" class="form-control" id="introduction" name="introduction"
+                            placeholder="〇〇区役所" value="{{ old('introduction') }}">
                         @if ($errors->has('introduction'))
                             <div class="error text-danger">
                                 <p>{{ $errors->first('introduction') }}</p>
