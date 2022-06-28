@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
+use App\Consts\ConstUser;
 use Illuminate\Http\Request;
 use App\Http\Services\MailService;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Admin\Auth\RegisterController;
 
 class UserController extends Controller
 {
@@ -67,7 +69,8 @@ class UserController extends Controller
     public function updateFee(Request $request, User $user)
     {
         $user->update([
-            'fee' => $request->fee,
+            'fee'       => $request->fee,
+            'use_time' => $this->getUseTimeByFee($request->fee),
         ]);
     }
 
@@ -99,5 +102,19 @@ class UserController extends Controller
 
         // 評価表削除
         unlink(storage_path("app/{$fileName}"));
+    }
+
+    /**
+     * 利用料金によって利用時間取得
+     * @param Integer　 利用人数
+     * @return Integer 料金
+     */
+    public function getUseTimeByFee($fee)
+    { 
+        if ($fee === ConstUser::FEE_ONE_SIBLING || $fee === ConstUser::FEE_TWO_SIBLING) {
+            return ConstUser::LONG_USE_TIME;
+        } else {
+            return ConstUser::NORMAL_USE_TIME;
+        }
     }
 }
