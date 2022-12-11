@@ -31,6 +31,14 @@
               </p>
             </div>
 
+            <div class="mb-4">
+              <h3>お知らせ</h3>
+              <p class="text-danger">
+                当面の間は、平日のご予約を承っておりません。<br>
+                ご迷惑をおかけしますが、ご理解の程、よろしくお願い致します。
+              </p>
+            </div>
+
             {{-- 予約カレンダー ここから--}}
             <table class="reserv-table">
                 <caption><a href="?ym={{ $calenderInfo['prevMonth'] }}" class="month-select" style="padding-right: 1.5rem">&lt;</a>{{ $calenderInfo['calenderTitle'] }}<a href="?ym={{ $calenderInfo['nextMonth'] }}" class="month-select" style="padding-left: 1.5rem">&gt;</a></caption>
