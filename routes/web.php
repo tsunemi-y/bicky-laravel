@@ -50,7 +50,7 @@ Route::get('introduction', function () {
     return view('pages.introduction');
 })->name('introduction');
 
-Route::get('/reservation', [ReservationController::class, 'dispReservationTop'])->name('reservationTop')->middleware('auth');
+Route::get('/reservation', [ReservationController::class, 'index'])->name('reservationTop')->middleware('auth');
 Route::get('/reservationForm', [ReservationController::class, 'dispReservationForm'])->name('reservationForm');
 Route::get('/reservationFormUsed', [ReservationController::class, 'dispReservationFormUsed'])->name('reservationFormUsed');
 
@@ -58,7 +58,7 @@ Route::get('/reservationFormUsed', [ReservationController::class, 'dispReservati
 Route::get('/dispReservationCancel/{reservation}', [ReservationController::class, 'dispReservationCancel'])->name('dispReservationCancel');
 Route::post('/cancelReservation/{reservation}', [ReservationController::class, 'cancelReservation'])->name('cancelReservation');
 
-Route::post('/createReservation', [ReservationController::class, 'createReservation'])->name('createReservation')->middleware('auth');
+Route::post('/store', [ReservationController::class, 'store'])->name('store')->middleware('auth');
 Route::post('/reservation/sendmail', [ReservationController::class, 'sendMail'])->name('sendMail');
 
 // auth

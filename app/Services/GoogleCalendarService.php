@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services;
+namespace App\Services;
 
 use Google_Client;
 use Google_Service_Calendar;
@@ -78,7 +78,7 @@ class GoogleCalendarService
 
         //権限の指定
         $client->setScopes(Google_Service_Calendar::CALENDAR_EVENTS);
-        
+
         //JSONファイルの指定
         $client->setAuthConfig(storage_path('app/api-key/bicky-347713-47d82b536dcd.json'));
 

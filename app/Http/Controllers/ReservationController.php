@@ -5,31 +5,29 @@ namespace App\Http\Controllers;
 use \Yasumi\Yasumi;
 use App\Models\User;
 use App\Models\Reservation;
-use App\Http\Services\MailService;
-use App\Http\Traits\Reservationable;
+use App\Services\MailService;
+use App\Traits\Reservationable;
 
+use App\Services\ReservationService;
+use App\Services\GoogleCalendarService;
+use App\Services\LineMessengerServices;
 use App\Http\Requests\ReservationFormRequest;
-use App\Http\Services\LineMessengerServices;
-use App\Http\Services\GoogleCalendarService;
 use App\Http\Requests\ReservationCalenderFormRequest;
 
 class ReservationController extends Controller
 {
     use Reservationable;
-    /**
-     * 予約画面表示.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function dispReservationTop(ReservationCalenderFormRequest $request)
+
+    public function __construct(private ReservationService $reservationService, private GoogleCalendarService $googleCalendarService)
+    {
+    }
+
+    public function index(ReservationCalenderFormRequest $request)
     {
         $calenderInfo = $this->createCalender($request);
         return view('pages.reservations.reservation', compact('calenderInfo'));
     }
 
-    /**
-     * カレンダー作成
-     */
     public function createCalender($request)
     {
 
@@ -118,82 +116,29 @@ class ReservationController extends Controller
         return compact('calenders', 'calenderTitle', 'prevMonth', 'nextMonth', 'avaTimes');
     }
 
-    public function existsDuplicateReservation($request)
+    public function store(ReservationFormRequest $request, Reservation $reservation)
     {
-        $reservationModel = new Reservation;
-
-        // 同じ日時に予約があるときはエラー
-        $reservedDateTime = $reservationModel
-            ->where('reservation_date', $request->avaDate)
-            ->where('reservation_time', $request->avaTime)
-            ->first();
-
-        return !empty($reservedDateTime);
-    }
-
-    /**
-     * 予約情報登録
-     * @param App\Http\Requests\ReservationFormRequest
-     * @return void
-     */
-    public function createReservation(ReservationFormRequest $request)
-    {
-        $reservationModel = new Reservation;
-
-        $isReserved = $this->existsDuplicateReservation($request);
-        // 指定した日時がすでに埋まっている場合は予約トップにリダイレクト
-        if ($isReserved) return redirect(route('reservationTop'))->with('failedReservation', '選択された日時はすでにご予約がございます。</br>違う日時でご予約ください。');
+        // 指定した日時がすでに埋まっている場合、予約トップにリダイレクト
+        $isReserved = $this->reservationService->existsDuplicateReservation($request);
+        if ($isReserved) {
+            return redirect(route('reservationTop'))
+                ->with('failedReservation', '選択された日時はすでにご予約がございます。</br>違う日時でご予約ください。');
+        } 
 
         $userId = \Auth::id();
-        $useTime = User::find($userId)->use_time;
-        $endTime = date('H:i:s', strtotime("{$request->avaTime} +{$useTime} minute -1 second"));
 
-        $reservedInfo = $reservationModel->create([
-            'user_id' => $userId,
-            'reservation_date' => $request->avaDate,
-            'reservation_time' => $request->avaTime,
-            'end_time' => $endTime,
-        ]);
+        $endTime = $this->reservationService->calculateReservationEndTime($request, $userId);
+
+        $reservedInfo = $this->reservationService->createReservation($reservation, $request, $userId, $endTime);
 
         $userInfo = User::find($userId);
-        $mailData = [
-            'childName' => $userInfo->childName,
-            'childName2' => $userInfo->childName2,
-            'reservationDate' => $request->avaDate,
-            'reservationTime' => $request->avaTime,
-            'email' => $userInfo->email,
-            'reservationId' => $reservedInfo->id,
-        ];
 
-        $this->sendReservationMessage($mailData);
+        $this->reservationService->sendReservationMessage($request, $userInfo, $reservedInfo);
 
-        $googleCalendar = new GoogleCalendarService();
-        $googleCalendar->store($userInfo->parentName, $request->avaDate. $request->avaTime, $request->avaDate. $endTime, $reservedInfo->id);
+        $this->googleCalendarService->store($userInfo->parentName, $request->avaDate. $request->avaTime, $request->avaDate. $endTime, $reservedInfo->id);
 
         return redirect(route('reservationTop'))
             ->with('successReservation', '予約を受け付けました。</br>予約内容確認のメールをお送りしました。');
-    }
-
-    /**
-     * 予約メッセージ送信
-     * @param $param
-     * @return void
-     */
-    public function sendReservationMessage($params)
-    {
-        // 日時のフォーマット変更
-        $params['reservationTime'] = formatTime($params['reservationTime']);
-        $params['reservationDate'] = formatDate($params['reservationDate']);
-
-        // 管理者へLINEメッセージ送信
-        $lineMessenger = new LineMessengerServices();
-        $lineMessenger->sendReservationMessage($params['childName'], $params['childName2'], $params['reservationDate'], $params['reservationTime']);
-
-        // 利用者へのメールに必要なデータ設定
-        $mailService = new MailService();
-        $viewFile = 'emails.reservations.user';
-        $subject = '予約を受け付けました';
-        $mailService->sendMailToUser($params, $viewFile, $subject);
     }
 
     /**

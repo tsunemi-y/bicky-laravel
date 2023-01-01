@@ -75,7 +75,7 @@
         </div>
         <div class="modal-body">
           <div id="jsAvaTime"></div>
-          <form action="{{ route('createReservation') }}" method="post" id="jsAvaTimeForm">
+          <form action="{{ route('store') }}" method="post" id="jsAvaTimeForm">
             @csrf
             <input type="hidden" value="" id="jsRequestedAvaDate" name="avaDate">
             <input type="hidden" value="" id="jsRequestedAvaTime" name="avaTime">

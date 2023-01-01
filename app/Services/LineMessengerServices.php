@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services;
+namespace App\Services;
 
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
