@@ -18984,10 +18984,15 @@ var ReceiptSend = function ReceiptSend(props) {
       user = _useState2[0],
       setUser = _useState2[1];
 
-  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(false),
+  var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(undefined),
       _useState4 = _slicedToArray(_useState3, 2),
-      loadingDispFlag = _useState4[0],
-      setLoadingDispFlag = _useState4[1];
+      discountAmount = _useState4[0],
+      setDiscountAmount = _useState4[1];
+
+  var _useState5 = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(false),
+      _useState6 = _slicedToArray(_useState5, 2),
+      loadingDispFlag = _useState6[0],
+      setLoadingDispFlag = _useState6[1];
 
   var _useParams = (0,react_router_dom__WEBPACK_IMPORTED_MODULE_5__.useParams)(),
       id = _useParams.id;
@@ -19030,6 +19035,8 @@ var ReceiptSend = function ReceiptSend(props) {
     }));
   };
 
+  var hiddenDiscountAmmount = function hiddenDiscountAmmount() {};
+
   var sendReceipt = function sendReceipt() {
     return __awaiter(void 0, void 0, void 0, /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
       var args;
@@ -19042,29 +19049,31 @@ var ReceiptSend = function ReceiptSend(props) {
               args = {
                 name: user.parentName,
                 email: user.email,
-                fee: user.fee
+                fee: user.fee,
+                discountAmount: discountAmount
               };
-              _context2.next = 5;
+              console.log(args);
+              _context2.next = 6;
               return axios__WEBPACK_IMPORTED_MODULE_3___default().post('/api/admin/sendReceipt', args);
 
-            case 5:
+            case 6:
               alert('領収書の送信に成功しました。');
               setLoadingDispFlag(false);
-              _context2.next = 13;
+              _context2.next = 14;
               break;
 
-            case 9:
-              _context2.prev = 9;
+            case 10:
+              _context2.prev = 10;
               _context2.t0 = _context2["catch"](0);
               alert('エラーです。やり直してください。');
               setLoadingDispFlag(false);
 
-            case 13:
+            case 14:
             case "end":
               return _context2.stop();
           }
         }
-      }, _callee2, null, [[0, 9]]);
+      }, _callee2, null, [[0, 10]]);
     }));
   };
 
@@ -19115,7 +19124,7 @@ var ReceiptSend = function ReceiptSend(props) {
     }, {
       children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("p", {
         children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", Object.assign({
-          className: "inline-block w-32"
+          className: "block w-32"
         }, {
           children: "\u3010\u6C0F\u540D\u3011"
         }), void 0), user.parentName]
@@ -19123,7 +19132,7 @@ var ReceiptSend = function ReceiptSend(props) {
         className: "mt-3"
       }, {
         children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", Object.assign({
-          className: "inline-block w-32"
+          className: "block w-32"
         }, {
           children: "\u3010\u30E1\u30FC\u30EB\u3011"
         }), void 0), user.email]
@@ -19131,13 +19140,50 @@ var ReceiptSend = function ReceiptSend(props) {
         className: "mt-3"
       }, {
         children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", Object.assign({
-          className: "inline-block w-32"
+          className: "block w-32"
         }, {
           children: "\u3010\u6599\u91D1\u3011"
         }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
           className: "border rounded",
           onBlur: onChangeFee,
           defaultValue: user.fee
+        }, void 0)]
+      }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("p", Object.assign({
+        className: "mt-3"
+      }, {
+        children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", Object.assign({
+          className: "block w-32"
+        }, {
+          children: "\u3010\u30AF\u30FC\u30DD\u30F3\u5272\u5F15\u3011"
+        }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
+          type: "radio",
+          name: "isDiscount",
+          className: "border rounded",
+          defaultValue: '1',
+          checked: true
+        }, void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", Object.assign({
+          className: "mr-2"
+        }, {
+          children: "\u9069\u7528\u3057\u306A\u3044"
+        }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
+          type: "radio",
+          name: "isDiscount",
+          className: "border rounded",
+          defaultValue: '0',
+          onClick: hiddenDiscountAmmount
+        }, void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", {
+          children: "\u9069\u7528\u3059\u308B"
+        }, void 0)]
+      }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("p", Object.assign({
+        className: "mt-3 hidden"
+      }, {
+        children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", Object.assign({
+          className: "block w-32"
+        }, {
+          children: "\u3010\u30AF\u30FC\u30DD\u30F3\u5272\u5F15\u91D1\u984D\u3011"
+        }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
+          className: "border rounded",
+          defaultValue: discountAmount
         }, void 0)]
       }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", Object.assign({
         className: "bg-blue-900 mt-3 p-1 rounded text-center text-white w-20"

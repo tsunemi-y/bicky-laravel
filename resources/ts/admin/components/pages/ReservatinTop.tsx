@@ -157,7 +157,9 @@ const ReservatinTop: React.FC<Props> = (props) => {
                     className="bg-red-500 block mt-3 p-1 rounded text-center text-white w-20" 
                     key={i} 
                     data-date={selectedDay} 
-                    onClick={(e: any) => deleteDatetime(selectedDay, e.target.innerText ) }>{targetAvaTimes[i]}
+                    onClick={(e: any) => deleteDatetime(selectedDay, e.target.innerText ) }
+                >
+                    {targetAvaTimes[i]}
                 </button>
             );
         }

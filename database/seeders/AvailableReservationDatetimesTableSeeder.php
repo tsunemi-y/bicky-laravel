@@ -17,19 +17,19 @@ class AvailableReservationDatetimesTableSeeder extends Seeder
         $timeList = [
             [
                 'available_time' => '10:00',
-                'available_date' => '2022/1/14'
+                'available_date' => '2023/1/14'
             ],
             [
                 'available_time' => '11:00',
-                'available_date' => '2022/1/14'
+                'available_date' => '2023/1/14'
             ],
             [
                 'available_time' => '13:00',
-                'available_date' => '2022/1/14'
+                'available_date' => '2023/1/14'
             ],
             [
                 'available_time' => '14:00',
-                'available_date' => '2022/1/15'
+                'available_date' => '2023/1/15'
             ],
         ];
 

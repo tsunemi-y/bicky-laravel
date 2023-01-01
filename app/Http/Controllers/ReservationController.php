@@ -9,8 +9,8 @@ use App\Http\Services\MailService;
 use App\Http\Traits\Reservationable;
 
 use App\Http\Requests\ReservationFormRequest;
-use App\Http\Controllers\LineMessengerController;
-use App\Http\Controllers\GoogleCalendarController;
+use App\Http\Services\LineMessengerServices;
+use App\Http\Services\GoogleCalendarService;
 use App\Http\Requests\ReservationCalenderFormRequest;
 
 class ReservationController extends Controller
@@ -167,8 +167,8 @@ class ReservationController extends Controller
 
         $this->sendReservationMessage($mailData);
 
-        $googleCalendar = new GoogleCalendarController();
-        $googleCalendar->store($userInfo->parentName, $request->avaDate . $request->avaTime, $request->avaDate . $endTime);
+        $googleCalendar = new GoogleCalendarService();
+        $googleCalendar->store($userInfo->parentName, $request->avaDate. $request->avaTime, $request->avaDate. $endTime, $reservedInfo->id);
 
         return redirect(route('reservationTop'))
             ->with('successReservation', '予約を受け付けました。</br>予約内容確認のメールをお送りしました。');
@@ -186,7 +186,7 @@ class ReservationController extends Controller
         $params['reservationDate'] = formatDate($params['reservationDate']);
 
         // 管理者へLINEメッセージ送信
-        $lineMessenger = new LineMessengerController();
+        $lineMessenger = new LineMessengerServices();
         $lineMessenger->sendReservationMessage($params['childName'], $params['childName2'], $params['reservationDate'], $params['reservationTime']);
 
         // 利用者へのメールに必要なデータ設定
@@ -208,7 +208,7 @@ class ReservationController extends Controller
         $params['reservationDate'] = formatDate($params['reservationDate']);
 
         // 管理者へLINEメッセージ送信
-        $lineMessenger = new LineMessengerController();
+        $lineMessenger = new LineMessengerServices();
         $lineMessenger->sendCancelReservationMessage($params['childName'], $params['childName2'], $params['reservationDate'], $params['reservationTime']);
 
         // 利用者へのメールに必要なデータ設定
@@ -245,6 +245,9 @@ class ReservationController extends Controller
         ];
 
         $this->sendCancelReservationMessage($messageData);
+
+        $googleCalendar = new GoogleCalendarService();
+        $googleCalendar->delete($reservation->id);
 
         return redirect(route('reservationTop'))->with('reservationCancel', '予約をキャンセルしました。');
     }

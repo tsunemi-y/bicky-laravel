@@ -1,0 +1,37 @@
+<!-- 1秒ごとに、文字列を連結していく関数を作成せよ -->
+
+<script>
+    // // 高階関数
+    // function concatString(str, func) {
+    //     setTimeout(function() {
+    //         func(str);
+    //     }, 1000);
+    // }
+
+    // function callback() {
+    //     // コールバック関数
+    //     let str = 'a'
+    //     concatString(str, function(str) {
+    //         console.log(str);
+    //         concatString(str + 'b', function(str) {
+    //             console.log(str);
+    //             concatString(str + 'c', function(str) {
+    //                 console.log(str);
+    //                 concatString(str + 'd', function(str) {
+    //                     console.log(str);
+    //                 })
+    //             })
+    //         })
+    //     });
+    // }
+
+    function concatString(str, func) {
+        return new Promsie(function(resolve, reject) {
+            setTimeout(function() {
+                func(str);
+            }, 1000);
+        });
+    }
+
+    callback();
+</script>

@@ -31,6 +31,7 @@ class UsersTableSeeder extends Seeder
             'introduction' => '区役所',
             'coursePlan' => 1,
             'fee' => '7700',
+            'use_time' => 60,
         ]);
     }
 }

@@ -1,16 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Services;
 
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use App\Models\Reservation;
 
-class LineMessengerController extends Controller
+class LineMessengerServices
 {
+    private $userId;
+
+    public function __construct()
+    {
+        $this->userId = config('services.line.admin_id');
+    }
+
     // メッセージ送信用
-    public function sendMessage($userId, $message)
+    public function sendMessage($message)
     {
         // LINEBOTSDKの設定
         $httpClient = new CurlHTTPClient(config('services.line.channel_token'));
@@ -18,13 +25,12 @@ class LineMessengerController extends Controller
 
         // メッセージ送信
         $textMessageBuilder = new TextMessageBuilder($message);
-        $bot->pushMessage($userId, $textMessageBuilder);
+        $bot->pushMessage($this->userId, $textMessageBuilder);
     }
 
     // 予約一覧リストのメッセージ作成
     public function sendReservationListMessage()
     {
-        $userId = config('services.line.admin_id');
         $today = date("Y-m-d H:i:s");
         $reservationModel = new Reservation;
         $todayReservationList = $reservationModel->with('user')->where('reservation_date', '=', $today)->oldest('reservation_time')->get();
@@ -43,41 +49,36 @@ class LineMessengerController extends Controller
             }
         }
 
-        $this->sendMessage($userId, $message);
+        $this->sendMessage($message);
     }
 
     // 予約があった場合にメッセージ送信
     public function sendReservationMessage($name, $name2, $reservationDate, $reservationTime)
     {
-        $userId = config('services.line.admin_id');
-
         $message = 'ご予約を受け付けました。' . "\n" . "\n";
         $message .= "利用児氏名：　{$name}" . "\n";
         if (!empty($name2)) $message .= "利用児2氏名：　{$name2}" . "\n";
         $message .= "予約日時：　{$reservationDate}" . "\n";
         $message .= "予約時間：　{$reservationTime}";
 
-        $this->sendMessage($userId, $message);
+        $this->sendMessage($message);
     }
 
     // 予約キャンセルがあった場合にメッセージ送信
     public function sendCancelReservationMessage($name, $name2, $reservationDate, $reservationTime)
     {
-        $userId = config('services.line.admin_id');
-
         $message = 'ご予約がキャンセルされました。' . "\n" . "\n";
         $message .= "利用児氏名：　{$name}" . "\n";
         if (!empty($name2)) $message .= "利用児2氏名：　{$name2}" . "\n";
         $message .= "予約日時：　{$reservationDate}" . "\n";
         $message .= "予約時間：　{$reservationTime}";
 
-        $this->sendMessage($userId, $message);
+        $this->sendMessage($message);
     }
 
     // 新規登録者のメッセージ作成
     public function sendRegistrationMessage($user)
     {
-        $userId = config('services.line.admin_id');
         $coursePlan = convertCourseFeeToName($user->fee);
 
         $message = '新規登録を受付ました。' . "\n" . "\n";
@@ -98,6 +99,6 @@ class LineMessengerController extends Controller
         $message .= "ご利用プラン：　{$coursePlan}" . "\n";
         $message .= "料金：　$user->fee";
         
-        $this->sendMessage($userId, $message);
+        $this->sendMessage($message);
     }
 }
