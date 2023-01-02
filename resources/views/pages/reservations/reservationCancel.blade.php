@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col mt-4">
           <h1 class="main-title">予約キャンセル</h1>
-        <form action="{{ route('cancelReservation', ['reservation' => $reservation->id] ) }}" method="post" class="w-100 mx-auto">
+        <form action="{{ route('destroy', ['reservation' => $reservation->id] ) }}" method="post" class="w-100 mx-auto">
             @csrf
             <div>
                 <div>

@@ -55,8 +55,8 @@ Route::get('/reservationForm', [ReservationController::class, 'dispReservationFo
 Route::get('/reservationFormUsed', [ReservationController::class, 'dispReservationFormUsed'])->name('reservationFormUsed');
 
 // キャンセル画面
-Route::get('/dispReservationCancel/{reservation}', [ReservationController::class, 'dispReservationCancel'])->name('dispReservationCancel');
-Route::post('/cancelReservation/{reservation}', [ReservationController::class, 'cancelReservation'])->name('cancelReservation');
+Route::get('/show/{reservation}', [ReservationController::class, 'show'])->name('show');
+Route::post('/destroy/{reservation}', [ReservationController::class, 'destroy'])->name('destroy');
 
 Route::post('/store', [ReservationController::class, 'store'])->name('store')->middleware('auth');
 Route::post('/reservation/sendmail', [ReservationController::class, 'sendMail'])->name('sendMail');

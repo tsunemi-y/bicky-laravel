@@ -3,4 +3,4 @@
 【予約時間】 {{ $reservationTime ?? '' }}
 
 予約をキャンセルする場合は、下記URLからお願いいたします。
-{{ route('dispReservationCancel', $reservationId) }}
+{{ route('show', $reservationId) }}
