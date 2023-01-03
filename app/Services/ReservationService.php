@@ -3,33 +3,29 @@
 namespace App\Services;
 
 use \Yasumi\Yasumi;
-use App\Traits\Reservationable;
 use App\Models\User;
 use App\Models\Reservation;
 use App\Services\MailService;
+use App\Traits\Reservationable;
 use App\Services\LineMessengerServices;
+use App\Repositories\ReservationRepository;
 
 class ReservationService
 {
     use Reservationable;
-    
+
     public function __construct(
         private GoogleCalendarService $googleCalendarService, 
         private MailService $mailService, 
-        private LineMessengerServices $lineMessengerServices
+        private LineMessengerServices $lineMessengerServices,
+        private ReservationRepository $reservationRepository,
     ) {
     }
 
     public function createCalender($request)
     {
-
-        // 予約可能日時取得
-        $tmpAvaDatetimes = $this->getTmpAvailableReservationDatetimes();
-
-        // 予約されている日時取得
-        $reserveDateTimes = $this->getReservationDatetimes();
-
-        $avaDatetimes = $this->getAvailableReservationDatetimes($tmpAvaDatetimes, $reserveDateTimes);
+        $avaDatetimes = $this->reservationRepository->getAvailableDatetimes();
+        \Log::info($avaDatetimes);
 
         $avaDates = $avaDatetimes['avaDates'];
         $avaTimes = $avaDatetimes['avaDatetimes'];

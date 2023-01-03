@@ -19,6 +19,7 @@ class ReservationController extends Controller
     public function index(ReservationCalenderFormRequest $request)
     {
         $calenderInfo = $this->reservationService->createCalender($request);
+        \Log::info($calenderInfo);
         return view('pages.reservations.reservation', compact('calenderInfo'));
     }
 
