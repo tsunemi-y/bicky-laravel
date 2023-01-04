@@ -12,15 +12,15 @@ class ReservationRepository
     {
         return AvailableReservationDatetime::query()
             ->select(DB::raw('
-            cast(available_date)
+            available_date
             ,array_agg(available_time) available_times
         '))
             ->whereNotExists(function($query) {
             $query->select(DB::raw(1))
                 ->from('reservations')
-                ->where('reservation_date', 'available_date')
-                ->whereBetween('available_time', ['reservation_time', 'end_time']);
-        })
+                ->whereRaw('CAST(available_date AS DATE) = CAST(reservation_date AS DATE)')
+                ->whereRaw('CAST(available_time AS TIME) BETWEEN CAST(reservation_time AS TIME) AND CAST(end_time AS TIME)');
+            })
             ->groupBy('available_date')
             ->get();
     }

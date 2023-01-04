@@ -22,13 +22,17 @@ class ReservationService
     ) {
     }
 
+    // todo:html部分をビューに移行。ビューの日付押下時のエラー修正
     public function createCalender($request)
     {
         $avaDatetimes = $this->reservationRepository->getAvailableDatetimes();
         \Log::info($avaDatetimes);
 
-        $avaDates = $avaDatetimes['avaDates'];
-        $avaTimes = $avaDatetimes['avaDatetimes'];
+        $avaDates = [];
+        foreach ($avaDatetimes as $datetime) {
+            $avaDates[] = $datetime->available_date;
+        }
+        $avaTimes = $avaDatetimes;
 
         // カレンダーに必要な情報取得
         if (!empty($request->ym)) {
