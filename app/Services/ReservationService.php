@@ -26,13 +26,15 @@ class ReservationService
     public function createCalender($request)
     {
         $avaDatetimes = $this->reservationRepository->getAvailableDatetimes();
-        \Log::info($avaDatetimes);
 
         $avaDates = [];
+        $avaTimes = [];
         foreach ($avaDatetimes as $datetime) {
             $avaDates[] = $datetime->available_date;
+
+            $tmpAvaTimes = toArrayFromArrayColumn($datetime->available_times);
+            $avaTimes[$datetime->available_date] = $tmpAvaTimes;
         }
-        $avaTimes = $avaDatetimes;
 
         // カレンダーに必要な情報取得
         if (!empty($request->ym)) {
@@ -59,9 +61,6 @@ class ReservationService
         // カレンダーの中身を格納する変数
         $calenders = [];
         $calender = '';
-
-        $timeList = [];
-        $time = '';
 
         // 初日と曜日の位置調整
         $calender .= str_repeat('<td></td>', $week);

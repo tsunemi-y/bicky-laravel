@@ -63,7 +63,7 @@
         </div>
     </div>
 
-　{{-- 予約時間選択モーダル --}}
+  {{-- 予約時間選択モーダル --}}
   <div class="modal fade" id="avaTimeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
