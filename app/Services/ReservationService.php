@@ -51,7 +51,7 @@ class ReservationService
         $week = date('w', $timestamp);
         $saturdayNum = 6;
         $sundayNum = 0;
-        $nowDate = date('Y-m-d');
+        $dayAfterTomorrow = date('Y-m-d', strtotime('+2 day'));
         $prevMonth = date('Y-m', strtotime('-1 month', $timestamp));
         $nextMonth = date('Y-m', strtotime('+1 month', $timestamp));
 
@@ -81,7 +81,7 @@ class ReservationService
             if ($holidays->isHoliday(new \DateTime($displayedDate)) || $week == 0) $calender .= 'class="holiday" ';
             if ($week == $saturdayNum) $calender .= 'class="saturday" ';
             $calender .= '>' . $day;
-            if (strtotime($displayedDate) <= strtotime($nowDate)) {
+            if (strtotime($displayedDate) <= strtotime($dayAfterTomorrow)) {
                 $calender .= "<p class='hyphen'>-</p>";
             } else if ($isAvailableDate && !$holidays->isHoliday(new \DateTime($displayedDate))) {
                 $calender .= "<p class='circle day-ok' data-date='$displayedDate'>○</p>";
