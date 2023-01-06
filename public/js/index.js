@@ -12113,7 +12113,7 @@ var ReservatinTop = function ReservatinTop(props) {
   var _useState = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)([rData]),
       _useState2 = _slicedToArray(_useState, 2),
       reservations = _useState2[0],
-      getReservations = _useState2[1];
+      index = _useState2[1];
 
   var _useState3 = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(initialInputData),
       _useState4 = _slicedToArray(_useState3, 2),
@@ -12142,7 +12142,7 @@ var ReservatinTop = function ReservatinTop(props) {
 
             case 5:
               response = _context.sent;
-              getReservations(response.data);
+              index(response.data);
               setLoadingDispFlag(false);
 
             case 8:

@@ -7,8 +7,12 @@ use App\Models\User;
 use App\Models\Reservation;
 use App\Services\MailService;
 use App\Traits\Reservationable;
+use App\Consts\ConstReservation;
+use Illuminate\Support\Facades\DB;
 use App\Services\LineMessengerServices;
 use App\Repositories\ReservationRepository;
+use App\Models\AvailableReservationDatetime;
+use App\Repositories\AvailableReservationDatetimeRepository;
 
 class ReservationService
 {
@@ -19,22 +23,16 @@ class ReservationService
         private MailService $mailService, 
         private LineMessengerServices $lineMessengerServices,
         private ReservationRepository $reservationRepository,
+        private AvailableReservationDatetimeRepository $availableReservationDatetimeRepository
     ) {
     }
 
     // todo:html部分をビューに移行。ビューの日付押下時のエラー修正
     public function createCalender($request)
     {
-        $avaDatetimes = $this->reservationRepository->getAvailableDatetimes();
-
-        $avaDates = [];
-        $avaTimes = [];
-        foreach ($avaDatetimes as $datetime) {
-            $avaDates[] = $datetime->available_date;
-
-            $tmpAvaTimes = toArrayFromArrayColumn($datetime->available_times);
-            $avaTimes[$datetime->available_date] = $tmpAvaTimes;
-        }
+        $avaDatetimes = $this->getMappingAvailableDatesAndTimes();
+        $avaDates = $avaDatetimes['avaDates'];
+        $avaTimes = $avaDatetimes['avaTimes'];
 
         // カレンダーに必要な情報取得
         if (!empty($request->ym)) {
@@ -175,5 +173,84 @@ class ReservationService
         $viewFile = 'emails.reservations.cancel';
         $subject = '予約をキャンセルしました';
         $this->mailService->sendMailToUser($messageData, $viewFile, $subject);
+    }
+
+    public function getMappingAvailableDatesAndTimes()
+    {
+        $avaDatetimes = $this->reservationRepository->getAvailableDatetimes();
+
+        $avaDates = [];
+        $avaTimes = [];
+        foreach ($avaDatetimes as $datetime) {
+            $avaDates[] = $datetime->available_date;
+
+            $tmpAvaTimes = toArrayFromArrayColumn($datetime->available_times);
+            $avaTimes[$datetime->available_date] = $tmpAvaTimes;
+        }
+
+        return compact('avaDates', 'avaTimes');
+    }
+
+    public function getReservations()
+    {
+        $tmpReservations = $this->reservationRepository->getReservations();
+
+        $reservations = [];
+        foreach ($tmpReservations as $tr) {
+            $reservations[$tr->reservation_date][] = [
+                'reservationName' => $tr->parentName,
+                'reservationTime' => $tr->reservation_time
+            ];
+        }
+
+        return $reservations;
+    }
+
+    public function getHolidays()
+    {
+        $holidays = Yasumi::create('Japan', date('Y'), 'ja_JP');
+        return array_values($holidays->getHolidayDates());
+    }
+
+    public function saveAvailableDatetime($request)
+    {
+        $datetime = $request['datetime'];
+        $date = substr($datetime, 0, 10);
+        $time = substr($datetime, 11, 15);
+
+        // 一括ボタン押下時、一括登録
+        if ($request['isBulkMonth']) {
+            // 祝日取得
+            $holidays = Yasumi::create('Japan', date('Y'), 'ja_JP');
+            $monthCount = date('t', strtotime($date));
+            $dateNotDay = substr($date, 0, 8); // 例）2022/05/
+            $insertDatetimes = [];
+
+            for ($i = 1; $i <= $monthCount; $i++) {
+                if ($holidays->isHoliday(new \DateTime($dateNotDay . $i))) continue;
+                foreach (ConstReservation::AVAILABLE_TIME_LIST as $time) {
+                    $insertDatetimes[] = [
+                        'available_date' => $dateNotDay . $i,
+                        'available_time' => $time,
+                    ];
+                }
+            }
+            $this->availableReservationDatetimeRepository->bulkInsert($insertDatetimes);
+        } elseif ($request['isBulkDay']) {
+            $insertDatetimes = [];
+            foreach (ConstReservation::AVAILABLE_TIME_LIST as $time) {
+                $insertDatetimes[] = [
+                    'available_date' => $date,
+                    'available_time' => $time,
+                ];
+            }
+            $this->availableReservationDatetimeRepository->bulkInsert($insertDatetimes);
+        } else {
+            $avaRsvDatetimeModel = new AvailableReservationDatetime();
+            $avaRsvDatetimeModel->create([
+                'available_date' => $date,
+                'available_time' => $time,
+            ]);
+        }
     }
 }

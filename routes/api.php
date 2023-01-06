@@ -16,8 +16,8 @@ use App\Http\Controllers\Admin\ReservationController;
 */
 
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::get('/reservation', [ReservationController::class, 'getReservations'])->name('getReservation');
-    Route::post('/saveReservation', [ReservationController::class, 'saveDatetime'])->name('saveReservation');
+    Route::get('/reservation', [ReservationController::class, 'index'])->name('getReservation');
+    Route::post('/saveReservation', [ReservationController::class, 'store'])->name('saveReservation');
     Route::post('/deleteReservation', [ReservationController::class, 'deleteDatetime'])->name('deleteDatetime');
 
     // Route::get('/getUserInfoSendReciept', [ReservationController::class, 'getUserInfoSendReciept'])->name('getUserInfoSendReciept');

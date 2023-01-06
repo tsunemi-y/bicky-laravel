@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use DB;
+use App\Models\Reservation;
 use Illuminate\Support\Collection;
 use App\Models\AvailableReservationDatetime;
 
@@ -23,5 +24,14 @@ class ReservationRepository
             })
             ->groupBy('available_date')
             ->get();
+    }
+
+    public function getReservations(): Collection
+    {
+        return Reservation::query()
+            ->join('users', 'reservations.user_id', 'users.id')
+            ->orderBy('reservation_date', 'asc')
+            ->orderBy('reservation_time', 'asc')
+            ->get(['parentName', 'reservation_date', 'reservation_time']);
     }
 }
