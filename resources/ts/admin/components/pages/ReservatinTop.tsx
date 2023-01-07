@@ -30,8 +30,9 @@ const ReservatinTop: React.FC<Props> = (props) => {
     const [holidays, setHolidays] = useState<any>([]);
     const [date, setDate] = useState<Date>(new Date());
     const [datetime, setDatetime] = useState<any>('');
+    const [isBulkWeekend, setisBulkWeekend] = useState<boolean>(false);
     const [isBulkDay, setisBulkDay] = useState<boolean>(false);
-    const [isBulkMonth, setisBulkMonth] = useState<boolean>(true);
+    const [isBulkMonth, setisBulkMonth] = useState<boolean>(false);
     const [deletedTargetAvaTimes, setDeletedTargetAvaTimes] = useState<any>([]);
     const [isShownModal, setIsShownModal] = useState<boolean>(false);
     const [loadingDispFlag, setLoadingDispFlag] = useState<Boolean>(false);
@@ -114,6 +115,11 @@ const ReservatinTop: React.FC<Props> = (props) => {
         setDatetime(value);
     }
 
+    const onChangeisBulkWeekend = (event: React.ChangeEvent<HTMLInputElement>): void =>  {
+        const value: boolean = JSON.parse(event.target.value);
+        setisBulkWeekend(value);
+    }
+
     const onChangeisBulkDay = (event: React.ChangeEvent<HTMLInputElement>): void =>  {
         const value: boolean = JSON.parse(event.target.value);
         setisBulkDay(value);
@@ -133,7 +139,8 @@ const ReservatinTop: React.FC<Props> = (props) => {
             const data = {
                 datetime: replacedDatetime,
                 isBulkDay,
-                isBulkMonth
+                isBulkMonth,
+                isBulkWeekend
             }
             setLoadingDispFlag(true);
             await axios.post(`/api/admin/saveReservation`, data);
@@ -201,15 +208,24 @@ return (
                 </div>
 
                 <div>
-                    <label className="font-bold mr-3">一ヶ月一括登録</label>
-                    <label htmlFor="notisBulkMonth"><input type="radio" name="isBulkMonth" value="false" onChange={onChangeisBulkMonth} checked={isBulkMonth === false} id="notisBulkMonth"/>なし</label>
-                    <label htmlFor="isBulkMonth"><input type="radio" name="isBulkMonth" value="true" onChange={onChangeisBulkMonth} checked={isBulkMonth === true} id="isBulkMonth" className="ml-2" />あり</label>
-                </div>
+                    <p className="font-bold">■一括登録</p>
+                    <div>
+                        <label className="font-bold w-16 inline-block">土日</label>
+                        <label htmlFor="notisBulkWeekend"><input type="radio" name="isBulkWeekend" value="false" onChange={onChangeisBulkWeekend} checked={isBulkWeekend === false} id="notisBulkWeekend"/>なし</label>
+                        <label htmlFor="isBulkWeekend"><input type="radio" name="isBulkWeekend" value="true" onChange={onChangeisBulkWeekend} checked={isBulkWeekend === true} id="isBulkWeekend" className="ml-2" />あり</label>
+                    </div>
 
-                <div>
-                    <label className="font-bold mr-3">日にち一括登録</label>
-                    <label htmlFor="notisBulkDay"><input type="radio" name="isBulkDay" value="false" onChange={onChangeisBulkDay} checked={isBulkDay === false} id="notisBulkDay"/>なし</label>
-                    <label htmlFor="isBulkDay"><input type="radio" name="isBulkDay" value="true" onChange={onChangeisBulkDay} checked={isBulkDay === true} id="isBulkDay" className="ml-2" />あり</label>
+                    <div>
+                        <label className="font-bold w-16 inline-block">一ヶ月</label>
+                        <label htmlFor="notisBulkMonth"><input type="radio" name="isBulkMonth" value="false" onChange={onChangeisBulkMonth} checked={isBulkMonth === false} id="notisBulkMonth"/>なし</label>
+                        <label htmlFor="isBulkMonth"><input type="radio" name="isBulkMonth" value="true" onChange={onChangeisBulkMonth} checked={isBulkMonth === true} id="isBulkMonth" className="ml-2" />あり</label>
+                    </div>
+
+                    <div>
+                        <label className="font-bold w-16 inline-block">一日</label>
+                        <label htmlFor="notisBulkDay"><input type="radio" name="isBulkDay" value="false" onChange={onChangeisBulkDay} checked={isBulkDay === false} id="notisBulkDay"/>なし</label>
+                        <label htmlFor="isBulkDay"><input type="radio" name="isBulkDay" value="true" onChange={onChangeisBulkDay} checked={isBulkDay === true} id="isBulkDay" className="ml-2" />あり</label>
+                    </div>
                 </div>
 
                 <div className="bg-blue-900 mt-3 p-1 rounded text-center text-white w-20">

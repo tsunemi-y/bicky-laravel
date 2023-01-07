@@ -19033,9 +19033,9 @@ var ReceiptSend = function ReceiptSend(props) {
         }
       }, _callee, null, [[0, 9]]);
     }));
-  };
+  }; // const hiddenDiscountAmmount = => {
+  // }
 
-  var hiddenDiscountAmmount = function hiddenDiscountAmmount() {};
 
   var sendReceipt = function sendReceipt() {
     return __awaiter(void 0, void 0, void 0, /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee2() {
@@ -19147,32 +19147,6 @@ var ReceiptSend = function ReceiptSend(props) {
           className: "border rounded",
           onBlur: onChangeFee,
           defaultValue: user.fee
-        }, void 0)]
-      }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("p", Object.assign({
-        className: "mt-3"
-      }, {
-        children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("span", Object.assign({
-          className: "block w-32"
-        }, {
-          children: "\u3010\u30AF\u30FC\u30DD\u30F3\u5272\u5F15\u3011"
-        }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
-          type: "radio",
-          name: "isDiscount",
-          className: "border rounded",
-          defaultValue: '1',
-          checked: true
-        }, void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", Object.assign({
-          className: "mr-2"
-        }, {
-          children: "\u9069\u7528\u3057\u306A\u3044"
-        }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
-          type: "radio",
-          name: "isDiscount",
-          className: "border rounded",
-          defaultValue: '0',
-          onClick: hiddenDiscountAmmount
-        }, void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", {
-          children: "\u9069\u7528\u3059\u308B"
         }, void 0)]
       }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("p", Object.assign({
         className: "mt-3 hidden"
@@ -19359,33 +19333,38 @@ var ReservatinTop = function ReservatinTop(props) {
 
   var _useState9 = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(false),
       _useState10 = _slicedToArray(_useState9, 2),
-      isBulkDay = _useState10[0],
-      setisBulkDay = _useState10[1];
+      isBulkWeekend = _useState10[0],
+      setisBulkWeekend = _useState10[1];
 
-  var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(true),
+  var _useState11 = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(false),
       _useState12 = _slicedToArray(_useState11, 2),
-      isBulkMonth = _useState12[0],
-      setisBulkMonth = _useState12[1];
+      isBulkDay = _useState12[0],
+      setisBulkDay = _useState12[1];
 
-  var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)([]),
+  var _useState13 = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(false),
       _useState14 = _slicedToArray(_useState13, 2),
-      deletedTargetAvaTimes = _useState14[0],
-      setDeletedTargetAvaTimes = _useState14[1];
+      isBulkMonth = _useState14[0],
+      setisBulkMonth = _useState14[1];
 
-  var _useState15 = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(false),
+  var _useState15 = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)([]),
       _useState16 = _slicedToArray(_useState15, 2),
-      isShownModal = _useState16[0],
-      setIsShownModal = _useState16[1];
+      deletedTargetAvaTimes = _useState16[0],
+      setDeletedTargetAvaTimes = _useState16[1];
 
   var _useState17 = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(false),
       _useState18 = _slicedToArray(_useState17, 2),
-      loadingDispFlag = _useState18[0],
-      setLoadingDispFlag = _useState18[1];
+      isShownModal = _useState18[0],
+      setIsShownModal = _useState18[1];
 
-  var _useState19 = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(rData),
+  var _useState19 = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(false),
       _useState20 = _slicedToArray(_useState19, 2),
-      reservations = _useState20[0],
-      setReservations = _useState20[1];
+      loadingDispFlag = _useState20[0],
+      setLoadingDispFlag = _useState20[1];
+
+  var _useState21 = (0,react__WEBPACK_IMPORTED_MODULE_2__.useState)(rData),
+      _useState22 = _slicedToArray(_useState21, 2),
+      reservations = _useState22[0],
+      setReservations = _useState22[1];
 
   var fetchReservations = function fetchReservations() {
     return __awaiter(void 0, void 0, void 0, /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
@@ -19491,6 +19470,11 @@ var ReservatinTop = function ReservatinTop(props) {
     setDatetime(value);
   };
 
+  var onChangeisBulkWeekend = function onChangeisBulkWeekend(event) {
+    var value = JSON.parse(event.target.value);
+    setisBulkWeekend(value);
+  };
+
   var onChangeisBulkDay = function onChangeisBulkDay(event) {
     var value = JSON.parse(event.target.value);
     setisBulkDay(value);
@@ -19525,7 +19509,8 @@ var ReservatinTop = function ReservatinTop(props) {
               data = {
                 datetime: replacedDatetime,
                 isBulkDay: isBulkDay,
-                isBulkMonth: isBulkMonth
+                isBulkMonth: isBulkMonth,
+                isBulkWeekend: isBulkWeekend
               };
               setLoadingDispFlag(true);
               _context2.next = 9;
@@ -19652,63 +19637,98 @@ var ReservatinTop = function ReservatinTop(props) {
           id: "avaDatetime"
         }, void 0)]
       }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
-        children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", Object.assign({
-          className: "font-bold mr-3"
+        children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("p", Object.assign({
+          className: "font-bold"
         }, {
-          children: "\u4E00\u30F6\u6708\u4E00\u62EC\u767B\u9332"
-        }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("label", Object.assign({
-          htmlFor: "notisBulkMonth"
-        }, {
-          children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
-            type: "radio",
-            name: "isBulkMonth",
-            value: "false",
-            onChange: onChangeisBulkMonth,
-            checked: isBulkMonth === false,
-            id: "notisBulkMonth"
-          }, void 0), "\u306A\u3057"]
-        }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("label", Object.assign({
-          htmlFor: "isBulkMonth"
-        }, {
-          children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
-            type: "radio",
-            name: "isBulkMonth",
-            value: "true",
-            onChange: onChangeisBulkMonth,
-            checked: isBulkMonth === true,
-            id: "isBulkMonth",
-            className: "ml-2"
-          }, void 0), "\u3042\u308A"]
-        }), void 0)]
-      }, void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
-        children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", Object.assign({
-          className: "font-bold mr-3"
-        }, {
-          children: "\u65E5\u306B\u3061\u4E00\u62EC\u767B\u9332"
-        }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("label", Object.assign({
-          htmlFor: "notisBulkDay"
-        }, {
-          children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
-            type: "radio",
-            name: "isBulkDay",
-            value: "false",
-            onChange: onChangeisBulkDay,
-            checked: isBulkDay === false,
-            id: "notisBulkDay"
-          }, void 0), "\u306A\u3057"]
-        }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("label", Object.assign({
-          htmlFor: "isBulkDay"
-        }, {
-          children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
-            type: "radio",
-            name: "isBulkDay",
-            value: "true",
-            onChange: onChangeisBulkDay,
-            checked: isBulkDay === true,
-            id: "isBulkDay",
-            className: "ml-2"
-          }, void 0), "\u3042\u308A"]
-        }), void 0)]
+          children: "\u25A0\u4E00\u62EC\u767B\u9332"
+        }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+          children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", Object.assign({
+            className: "font-bold w-16 inline-block"
+          }, {
+            children: "\u571F\u65E5"
+          }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("label", Object.assign({
+            htmlFor: "notisBulkWeekend"
+          }, {
+            children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
+              type: "radio",
+              name: "isBulkWeekend",
+              value: "false",
+              onChange: onChangeisBulkWeekend,
+              checked: isBulkWeekend === false,
+              id: "notisBulkWeekend"
+            }, void 0), "\u306A\u3057"]
+          }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("label", Object.assign({
+            htmlFor: "isBulkWeekend"
+          }, {
+            children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
+              type: "radio",
+              name: "isBulkWeekend",
+              value: "true",
+              onChange: onChangeisBulkWeekend,
+              checked: isBulkWeekend === true,
+              id: "isBulkWeekend",
+              className: "ml-2"
+            }, void 0), "\u3042\u308A"]
+          }), void 0)]
+        }, void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+          children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", Object.assign({
+            className: "font-bold w-16 inline-block"
+          }, {
+            children: "\u4E00\u30F6\u6708"
+          }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("label", Object.assign({
+            htmlFor: "notisBulkMonth"
+          }, {
+            children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
+              type: "radio",
+              name: "isBulkMonth",
+              value: "false",
+              onChange: onChangeisBulkMonth,
+              checked: isBulkMonth === false,
+              id: "notisBulkMonth"
+            }, void 0), "\u306A\u3057"]
+          }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("label", Object.assign({
+            htmlFor: "isBulkMonth"
+          }, {
+            children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
+              type: "radio",
+              name: "isBulkMonth",
+              value: "true",
+              onChange: onChangeisBulkMonth,
+              checked: isBulkMonth === true,
+              id: "isBulkMonth",
+              className: "ml-2"
+            }, void 0), "\u3042\u308A"]
+          }), void 0)]
+        }, void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("div", {
+          children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("label", Object.assign({
+            className: "font-bold w-16 inline-block"
+          }, {
+            children: "\u4E00\u65E5"
+          }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("label", Object.assign({
+            htmlFor: "notisBulkDay"
+          }, {
+            children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
+              type: "radio",
+              name: "isBulkDay",
+              value: "false",
+              onChange: onChangeisBulkDay,
+              checked: isBulkDay === false,
+              id: "notisBulkDay"
+            }, void 0), "\u306A\u3057"]
+          }), void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsxs)("label", Object.assign({
+            htmlFor: "isBulkDay"
+          }, {
+            children: [(0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("input", {
+              type: "radio",
+              name: "isBulkDay",
+              value: "true",
+              onChange: onChangeisBulkDay,
+              checked: isBulkDay === true,
+              id: "isBulkDay",
+              className: "ml-2"
+            }, void 0), "\u3042\u308A"]
+          }), void 0)]
+        }, void 0)]
       }, void 0), (0,react_jsx_runtime__WEBPACK_IMPORTED_MODULE_1__.jsx)("div", Object.assign({
         className: "bg-blue-900 mt-3 p-1 rounded text-center text-white w-20"
       }, {

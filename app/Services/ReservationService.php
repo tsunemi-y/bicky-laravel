@@ -22,6 +22,7 @@ class ReservationService
         private GoogleCalendarService $googleCalendarService, 
         private MailService $mailService, 
         private LineMessengerServices $lineMessengerServices,
+        private AvailableReservationDatetimeService $availableReservationDatetimeService,
         private ReservationRepository $reservationRepository,
         private AvailableReservationDatetimeRepository $availableReservationDatetimeRepository
     ) {
@@ -217,33 +218,38 @@ class ReservationService
         $datetime = $request['datetime'];
         $date = substr($datetime, 0, 10);
         $time = substr($datetime, 11, 15);
+        $holidays = Yasumi::create('Japan', date('Y'), 'ja_JP');
+        $monthCount = date('t', strtotime($date));
+        $nonDayDate = substr($date, 0, 8); // 例）2022/05/
 
-        // 一括ボタン押下時、一括登録
-        if ($request['isBulkMonth']) {
-            // 祝日取得
-            $holidays = Yasumi::create('Japan', date('Y'), 'ja_JP');
-            $monthCount = date('t', strtotime($date));
-            $dateNotDay = substr($date, 0, 8); // 例）2022/05/
+        if ($request['isBulkWeekend']) {
             $insertDatetimes = [];
-
             for ($i = 1; $i <= $monthCount; $i++) {
-                if ($holidays->isHoliday(new \DateTime($dateNotDay . $i))) continue;
+                $week = (int)date('w', strtotime($nonDayDate. $i));
+                if (!($week === 0 || $week === 6)) continue;
+                if ($holidays->isHoliday(new \DateTime($nonDayDate . $i))) continue;
                 foreach (ConstReservation::AVAILABLE_TIME_LIST as $time) {
                     $insertDatetimes[] = [
-                        'available_date' => $dateNotDay . $i,
+                        'available_date' => $nonDayDate. $i,
+                        'available_time' => $time,
+                    ];
+                }
+            }
+            $this->availableReservationDatetimeRepository->bulkInsert($insertDatetimes);
+        } elseif ($request['isBulkMonth']) {
+            $insertDatetimes = [];
+            for ($i = 1; $i <= $monthCount; $i++) {
+                if ($holidays->isHoliday(new \DateTime($nonDayDate . $i))) continue;
+                foreach (ConstReservation::AVAILABLE_TIME_LIST as $time) {
+                    $insertDatetimes[] = [
+                        'available_date' => $nonDayDate. $i,
                         'available_time' => $time,
                     ];
                 }
             }
             $this->availableReservationDatetimeRepository->bulkInsert($insertDatetimes);
         } elseif ($request['isBulkDay']) {
-            $insertDatetimes = [];
-            foreach (ConstReservation::AVAILABLE_TIME_LIST as $time) {
-                $insertDatetimes[] = [
-                    'available_date' => $date,
-                    'available_time' => $time,
-                ];
-            }
+            $insertDatetimes = $this->availableReservationDatetimeService->getInsertDatetimes($date);
             $this->availableReservationDatetimeRepository->bulkInsert($insertDatetimes);
         } else {
             $avaRsvDatetimeModel = new AvailableReservationDatetime();

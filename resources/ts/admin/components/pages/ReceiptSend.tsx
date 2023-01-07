@@ -45,9 +45,9 @@ const ReceiptSend: React.FC<Props> = (props) => {
         }
     }
 
-    const hiddenDiscountAmmount = => {
+    // const hiddenDiscountAmmount = => {
 
-    }
+    // }
 
     const sendReceipt = async () =>  {
         try {
@@ -90,11 +90,11 @@ const ReceiptSend: React.FC<Props> = (props) => {
                <p><span className="block w-32">【氏名】</span>{user.parentName}</p>
                <p className="mt-3"><span className="block w-32">【メール】</span>{user.email}</p>
                <p className="mt-3"><span className="block w-32">【料金】</span><input className="border rounded" onBlur={onChangeFee} defaultValue={user.fee}/></p>
-               <p className="mt-3">
+               {/* <p className="mt-3">
                 <span className="block w-32">【クーポン割引】</span>
                 <input type="radio" name="isDiscount" className="border rounded" defaultValue='1' checked/><label className="mr-2">適用しない</label>
                 <input type="radio" name="isDiscount" className="border rounded" defaultValue='0' onClick={hiddenDiscountAmmount}/><label>適用する</label>
-                </p>
+                </p> */}
                <p className="mt-3 hidden"><span className="block w-32">【クーポン割引金額】</span><input className="border rounded" defaultValue={discountAmount}/></p>
                <div className="bg-blue-900 mt-3 p-1 rounded text-center text-white w-20">
                     <button className="w-full" onClick={sendReceipt}>送信</button>
