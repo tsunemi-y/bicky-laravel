@@ -5,9 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Models\User;
 use App\Consts\ConstUser;
 use Illuminate\Http\Request;
-use App\Http\Services\MailService;
+use App\Services\MailService;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Admin\Auth\RegisterController;
 
 class UserController extends Controller
 {
