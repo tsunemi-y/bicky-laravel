@@ -35,7 +35,7 @@ class ReservationController extends Controller
         $this->reservationService->saveAvailableDatetime($request);
     }
 
-    public function deleteDatetime(Request $request)
+    public function destroy(Request $request)
     {
         $time = date('H:i:s', strtotime(str_replace(['時', '分'], [':', ''], $request['time']))); // フロントから送られる形式は〇〇時〇〇分なので変換
 

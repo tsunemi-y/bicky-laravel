@@ -6,9 +6,7 @@ use \Yasumi\Yasumi;
 use App\Models\User;
 use App\Models\Reservation;
 use App\Services\MailService;
-use App\Traits\Reservationable;
 use App\Consts\ConstReservation;
-use Illuminate\Support\Facades\DB;
 use App\Services\LineMessengerServices;
 use App\Repositories\ReservationRepository;
 use App\Models\AvailableReservationDatetime;
@@ -16,8 +14,6 @@ use App\Repositories\AvailableReservationDatetimeRepository;
 
 class ReservationService
 {
-    use Reservationable;
-
     public function __construct(
         private GoogleCalendarService $googleCalendarService, 
         private MailService $mailService, 
