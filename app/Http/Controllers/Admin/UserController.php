@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\User;
-use App\Consts\ConstUser;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Services\FileService;
 use App\Services\MailService;
 use App\Services\UserService;
-use App\Http\Controllers\Controller;
 
 class UserController extends Controller
 {
     public function __construct(
         private MailService $mailService, 
-        private UserService $userService
+        private UserService $userService,
+        private FileService $fileService,
     )
     {
     }
@@ -35,22 +36,19 @@ class UserController extends Controller
             "fee"               => $request->fee,
         ];
 
-        // メールデータ作成
         $date = date('Ymd');
         $viewFile = 'admin.emails.receipt';
         $subject = '領収書のご送付';
         $attachFile = "app/領収書_{$date}.pdf";
+        $PDFView = 'admin/emails/receiptPdf';
 
-        // 領収書を出力し、ストレージに配置
-        $pdf = \PDF::loadView('admin/emails/receiptPdf', $args);
-        $downloadedPdf = $pdf->output();
-        file_put_contents(storage_path("app/領収書_{$date}.pdf"), $downloadedPdf);
+        $this->fileService->putPDF($args, $PDFView, $attachFile);
 
         // 領収書送信
         $this->mailService->sendMailToUser($args, $viewFile, $subject, $attachFile);
 
         // 領収書削除
-        unlink(storage_path("app/領収書_{$date}.pdf"));
+        $this->fileService->delete($attachFile);
     }
 
     public function updateFee(Request $request, User $user)
@@ -63,25 +61,23 @@ class UserController extends Controller
 
     public function sendEvaluation(Request $request)
     {
-        $fileName = $request->file('file')->getClientOriginalName();
-        $request->file('file')->storeAs('', $fileName);
-
         // パラメータ設定
         $args = [
             "name"  => $request->name,
             "email" => $request->email,
         ];
 
-        $attachFile = "app/{$fileName}";
+        $fileName = $request->file('file')->getClientOriginalName();
+        $this->fileService->putRequestedFile($request, $fileName);
 
-        // メールデータ作成
         $viewFile = 'admin.emails.evaluation';
         $subject = '評価表のご送付';
+        $attachFile = "app/{$fileName}";
 
         // 評価表送信
         $this->mailService->sendMailToUser($args, $viewFile, $subject, $attachFile);
 
         // 評価表削除
-        unlink(storage_path("app/{$fileName}"));
+        $this->fileService->delete($attachFile);
     }
 }

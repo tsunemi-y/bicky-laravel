@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Http\Controllers\LineMessengerController;
+use App\Services\LineMessengerServices;
 
 class SendReservationListToLine extends Command
 {
@@ -26,7 +26,7 @@ class SendReservationListToLine extends Command
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(private LineMessengerServices $lineMessengerServices)
     {
         parent::__construct();
     }
@@ -38,7 +38,6 @@ class SendReservationListToLine extends Command
      */
     public function handle()
     {
-        $lineMessenger = new LineMessengerController();
-        $lineMessenger->sendReservationListMessage();
+        $this->lineMessengerServices->sendReservationListMessage();
     }
 }
