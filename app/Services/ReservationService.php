@@ -114,10 +114,7 @@ class ReservationService
 
     public function existsDuplicateReservation($request)
     {
-        $reservationModel = new Reservation;
-
-        // 同じ日時に予約があるときはエラー
-        $reservedDateTime = $reservationModel
+        $reservedDateTime = Reservation::query()
             ->where('reservation_date', $request->avaDate)
             ->where('reservation_time', $request->avaTime)
             ->first();
