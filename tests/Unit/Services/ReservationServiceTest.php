@@ -3,6 +3,7 @@
 namespace Tests\Unit\Services;
 
 use Tests\TestCase;
+use App\Models\User;
 use App\Models\Reservation;
 use App\Services\MailService;
 use App\Services\ReservationService;
@@ -67,4 +68,19 @@ class ReservationServiceTest extends TestCase
 
         self::assertTrue($isDuplicate);
     }
+
+    public function testCalculateReservationEndTime(): void
+    {
+        $time = '11:00:00';
+
+        $userFactory = User::factory(1)->create()[0];
+        $user = User::query()->where('parentName', $userFactory->parentName)->get()[0];
+        
+        $endTime = $this->reservationService->calculateReservationEndTime((object) [
+            'avaTime' => $time,
+        ], $user->id);
+
+        self::assertTrue($endTime == date('H:i:s', strtotime("{$time} +{$user->use_time} minute -1 second")));
+    }
+    
 }

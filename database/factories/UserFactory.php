@@ -23,11 +23,27 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'name' => $this->faker->name(),
+            'parentName' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
+            'tel' => 555,
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
+            'childName' => $this->faker->name(),
+            'age' => 5,
+            'gender' => 'men',
+            'diagnosis' => 'ADHD',
+            'childName2' => $this->faker->name(),
+            'age2' => 5,
+            'gender2' => 'women',
+            'diagnosis2' => 'ASD',
+            'address' => 'osaka',
+            'introduction' => '役場',
+            'coursePlan' => 1,
+            'consaltation' => null,
+            'fee' => 13200,
+            'userAgent' => null,
+            'use_time' => 120,
         ];
     }
 
