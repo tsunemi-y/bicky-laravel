@@ -10,6 +10,7 @@ use App\Services\ReservationService;
 use App\Services\GoogleCalendarService;
 use App\Services\LineMessengerServices;
 use App\Repositories\ReservationRepository;
+use App\Models\AvailableReservationDatetime;
 use App\Services\AvailableReservationDatetimeService;
 use App\Repositories\AvailableReservationDatetimeRepository;
 
@@ -17,8 +18,6 @@ class ReservationServiceTest extends TestCase
 {
     private ReservationService $reservationService;
     private GoogleCalendarService $googleCalendarService;
-    private MailService $mailService; 
-    private LineMessengerServices $lineMessengerServices;
     private AvailableReservationDatetimeService $availableReservationDatetimeService;
     private ReservationRepository $reservationRepository;
     private AvailableReservationDatetimeRepository $availableReservationDatetimeRepository;
@@ -36,8 +35,6 @@ class ReservationServiceTest extends TestCase
 
         $this->reservationService = new ReservationService(
             $this->googleCalendarService,
-            $this->mailService,
-            $this->lineMessengerServices,
             $this->availableReservationDatetimeService,
             $this->reservationRepository,
             $this->availableReservationDatetimeRepository
@@ -81,6 +78,31 @@ class ReservationServiceTest extends TestCase
         ], $user->id);
 
         self::assertTrue($endTime == date('H:i:s', strtotime("{$time} +{$user->use_time} minute -1 second")));
+    }
+
+    public function testGetMappingAvailableDatesAndTimes(): void
+    {
+        AvailableReservationDatetime::factory(1)->create();
+
+        $avaDatetimes = $this->reservationRepository->getAvailableDatetimes();
+
+        $avaDates = [];
+        $avaTimes = [];
+        foreach ($avaDatetimes as $datetime) {
+            $avaDates[] = $datetime->available_date;
+
+            $tmpAvaTimes = toArrayFromArrayColumn($datetime->available_times);
+            $avaTimes[$datetime->available_date] = $tmpAvaTimes;
+        }
+        $avaDatetimes = [
+            'avaDates' => $avaDates,
+            'avaTimes' => $avaTimes,
+        ];
+
+        $tartgetAvaDatetimes = $this->reservationService->getMappingAvailableDatesAndTimes();
+
+        self::assertSame($avaDatetimes, $tartgetAvaDatetimes);
+
     }
     
 }

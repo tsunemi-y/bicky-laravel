@@ -16,8 +16,6 @@ class ReservationService
 {
     public function __construct(
         private GoogleCalendarService $googleCalendarService, 
-        private MailService $mailService, 
-        private LineMessengerServices $lineMessengerServices,
         private AvailableReservationDatetimeService $availableReservationDatetimeService,
         private ReservationRepository $reservationRepository,
         private AvailableReservationDatetimeRepository $availableReservationDatetimeRepository
@@ -127,46 +125,6 @@ class ReservationService
         $useTime = User::find($userId)->use_time;
 
         return date('H:i:s', strtotime("{$request->avaTime} +{$useTime} minute -1 second"));
-    }
-
-    public function sendReservationMessage($request, $userInfo, $reservedInfo)
-    {
-        // メール文面作成用のパラメータ作成
-        $messageData = [
-            'childName' => $userInfo->childName,
-            'childName2' => $userInfo->childName2,
-            'reservationDate' => formatDate($request->avaDate),
-            'reservationTime' => formatTime($request->avaTime),
-            'email' => $userInfo->email,
-            'reservationId' => $reservedInfo->id,
-        ];
-
-        // 管理者へLINEメッセージ送信
-        $this->lineMessengerServices->sendReservationMessage($messageData['childName'], $messageData['childName2'], $messageData['reservationDate'], $messageData['reservationTime']);
-
-        // 利用者へのメールに必要なデータ設定
-        $viewFile = 'emails.reservations.user';
-        $subject = '予約を受け付けました';
-        $this->mailService->sendMailToUser($messageData, $viewFile, $subject);
-    }
-
-    public function sendCancelReservationMessage($reservation)
-    {
-        $messageData = [
-            'reservationDate' => formatDate($reservation->reservation_date),
-            'reservationTime' => formatTime($reservation->reservation_time),
-            'childName'       => $reservation->user->childName,
-            'childName2'      => $reservation->user->childName2,
-            'email'           => $reservation->user->email,
-        ];
-
-        // 管理者へLINEメッセージ送信
-        $this->lineMessengerServices->sendCancelReservationMessage($messageData['childName'], $messageData['childName2'], $messageData['reservationDate'], $messageData['reservationTime']);
-
-        // 利用者へのメールに必要なデータ設定
-        $viewFile = 'emails.reservations.cancel';
-        $subject = '予約をキャンセルしました';
-        $this->mailService->sendMailToUser($messageData, $viewFile, $subject);
     }
 
     public function getMappingAvailableDatesAndTimes()

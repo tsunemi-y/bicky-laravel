@@ -5,14 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Reservation;
 
+use App\Services\MailService;
 use App\Services\ReservationService;
 use App\Services\GoogleCalendarService;
+use App\Services\LineMessengerServices;
 use App\Http\Requests\ReservationFormRequest;
 use App\Http\Requests\ReservationCalenderFormRequest;
 
 class ReservationController extends Controller
 {
-    public function __construct(private ReservationService $reservationService, private GoogleCalendarService $googleCalendarService)
+    public function __construct(
+        private ReservationService $reservationService, 
+        private GoogleCalendarService $googleCalendarService,
+        private MailService $mailService, 
+        private LineMessengerServices $lineMessengerServices,
+    )
     {
     }
 
@@ -39,7 +46,21 @@ class ReservationController extends Controller
 
         $userInfo = User::find($userId);
 
-        $this->reservationService->sendReservationMessage($request, $userInfo, $reservedInfo);
+        $messageData = [
+            'childName' => $userInfo->childName,
+            'childName2' => $userInfo->childName2,
+            'reservationDate' => formatDate($request->avaDate),
+            'reservationTime' => formatTime($request->avaTime),
+            'email' => $userInfo->email,
+            'reservationId' => $reservedInfo->id,
+        ];
+
+        // 管理者へ予約通知のLINEメッセージ送信
+        $this->lineMessengerServices->sendReservationMessage($messageData['childName'], $messageData['childName2'], $messageData['reservationDate'], $messageData['reservationTime']);
+
+        $viewFile = 'emails.reservations.user';
+        $subject = '予約を受け付けました';
+        $this->mailService->sendMailToUser($messageData, $viewFile, $subject);
 
         $this->googleCalendarService->store($userInfo->parentName, $request->avaDate. $request->avaTime, $request->avaDate. $endTime, $reservedInfo->id);
 
@@ -56,7 +77,20 @@ class ReservationController extends Controller
     {
         $reservation->delete();
 
-        $this->reservationService->sendCancelReservationMessage($reservation);
+        $messageData = [
+            'reservationDate' => formatDate($reservation->reservation_date),
+            'reservationTime' => formatTime($reservation->reservation_time),
+            'childName'       => $reservation->user->childName,
+            'childName2'      => $reservation->user->childName2,
+            'email'           => $reservation->user->email,
+        ];
+
+        // 管理者へ予約キャンセルのLINEメッセージ送信
+        $this->lineMessengerServices->sendCancelReservationMessage($messageData['childName'], $messageData['childName2'], $messageData['reservationDate'], $messageData['reservationTime']);
+
+        $viewFile = 'emails.reservations.cancel';
+        $subject = '予約をキャンセルしました';
+        $this->mailService->sendMailToUser($messageData, $viewFile, $subject);
 
         $this->googleCalendarService->delete($reservation->id);
 
