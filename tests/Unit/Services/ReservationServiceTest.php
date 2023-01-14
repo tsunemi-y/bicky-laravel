@@ -104,5 +104,28 @@ class ReservationServiceTest extends TestCase
         self::assertSame($avaDatetimes, $tartgetAvaDatetimes);
 
     }
+
+    public function testGetReservations(): void
+    {
+        $userFactory = User::factory(1)->create()[0];
+        $user = User::query()->where('parentName', $userFactory->parentName)->get()[0];
+
+        Reservation::factory(1)->create([
+            'user_id' => $user->id,
+        ]);
+
+        $tmpReservations = $this->reservationRepository->getReservations();
+        $reservations = [];
+        foreach ($tmpReservations as $tr) {
+            $reservations[$tr->reservation_date][] = [
+                'reservationName' => $tr->parentName,
+                'reservationTime' => $tr->reservation_time
+            ];
+        }
+
+        $tartgetReservations = $this->reservationService->getReservations();
+
+        self::assertSame($reservations, $tartgetReservations);
+    }
     
 }
