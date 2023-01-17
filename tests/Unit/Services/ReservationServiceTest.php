@@ -141,11 +141,13 @@ class ReservationServiceTest extends TestCase
 
     public function testSaveAvailableDatetime(): void
     {
-        $tmpHolidays = Yasumi::create('Japan', date('Y'), 'ja_JP');
-        $holidays = array_values($tmpHolidays->getHolidayDates());
+        $datetime = '9999/1/1 10:00:00';
 
-        $targetHolidays = $this->reservationService->getHolidays();
-
-        self::assertSame($holidays, $targetHolidays);
+        $this->reservationService->saveAvailableDatetime([
+            'datetime' => $datetime,
+            'isBulkWeekend' => 1,
+            'isBulkMonth' => 0,
+            'isBulkDay' => 0,
+        ]);
     }
 }
