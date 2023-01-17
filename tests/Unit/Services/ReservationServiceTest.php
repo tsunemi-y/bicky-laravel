@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Services;
 
+use Yasumi\Yasumi;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Reservation;
@@ -128,4 +129,23 @@ class ReservationServiceTest extends TestCase
         self::assertSame($reservations, $tartgetReservations);
     }
     
+    public function testGetHolidays(): void
+    {
+        $tmpHolidays = Yasumi::create('Japan', date('Y'), 'ja_JP');
+        $holidays = array_values($tmpHolidays->getHolidayDates());
+
+        $targetHolidays = $this->reservationService->getHolidays();
+
+        self::assertSame($holidays, $targetHolidays);
+    }
+
+    public function testSaveAvailableDatetime(): void
+    {
+        $tmpHolidays = Yasumi::create('Japan', date('Y'), 'ja_JP');
+        $holidays = array_values($tmpHolidays->getHolidayDates());
+
+        $targetHolidays = $this->reservationService->getHolidays();
+
+        self::assertSame($holidays, $targetHolidays);
+    }
 }
