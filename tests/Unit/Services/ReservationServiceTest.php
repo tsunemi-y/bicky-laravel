@@ -7,6 +7,7 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Reservation;
 use App\Services\MailService;
+use App\Consts\ConstReservation;
 use App\Services\ReservationService;
 use App\Services\GoogleCalendarService;
 use App\Services\LineMessengerServices;
@@ -141,13 +142,65 @@ class ReservationServiceTest extends TestCase
 
     public function testSaveAvailableDatetime(): void
     {
-        $datetime = '9999/1/1 10:00:00';
+        $datetime = '2033/1/1 10:00:00';
+        $date = substr($datetime, 0, 10);
+        $time = substr($datetime, 11, 15);
+        $monthCount = date('t', strtotime($date));
+        $nonDayDate = substr($date, 0, 8); // 例）2022/05/
 
+        // ============週末チェック============
         $this->reservationService->saveAvailableDatetime([
             'datetime' => $datetime,
             'isBulkWeekend' => 1,
             'isBulkMonth' => 0,
             'isBulkDay' => 0,
         ]);
+
+        $targetInsertWeeks = [6, 0];
+        $weekEndDatetimes = $this->getInsertDatetimes($monthCount, $nonDayDate, $targetInsertWeeks);
+
+        foreach ($weekEndDatetimes as $weekEndDatetime) {
+            $this->assertDatabaseHas('available_reservation_datetimes', [
+                'available_date' => $weekEndDatetime['available_date'],
+                'available_time' => $weekEndDatetime['available_time'],
+            ]);
+        }
+
+        // ============一ヶ月============
+        $this->reservationService->saveAvailableDatetime([
+            'datetime' => $datetime,
+            'isBulkWeekend' => 1,
+            'isBulkMonth' => 0,
+            'isBulkDay' => 0,
+        ]);
+
+        $targetInsertWeeks = [6, 0];
+        $weekEndDatetimes = $this->getInsertDatetimes($monthCount, $nonDayDate, $targetInsertWeeks);
+
+        foreach ($weekEndDatetimes as $weekEndDatetime) {
+            $this->assertDatabaseHas('available_reservation_datetimes', [
+                'available_date' => $weekEndDatetime['available_date'],
+                'available_time' => $weekEndDatetime['available_time'],
+            ]);
+        }
+    }
+
+    private function getInsertDatetimes($monthCount, $nonDayDate, $targetInsertWeeks)
+    {
+        $holidays = Yasumi::create('Japan', date('Y'), 'ja_JP');
+
+        $insertDatetimes = [];
+        for ($i = 1; $i <= $monthCount; $i++) {
+            $week = (int)date('w', strtotime($nonDayDate. $i));
+            if (!(in_array($week, $targetInsertWeeks, true))) continue;
+            if ($holidays->isHoliday(new \DateTime($nonDayDate . $i))) continue;
+            foreach (ConstReservation::AVAILABLE_TIME_LIST as $time) {
+                $insertDatetimes[] = [
+                    'available_date' => $nonDayDate. $i,
+                    'available_time' => $time,
+                ];
+            }
+        }
+        return $insertDatetimes;
     }
 }

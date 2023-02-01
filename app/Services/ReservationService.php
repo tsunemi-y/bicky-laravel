@@ -169,36 +169,15 @@ class ReservationService
         $datetime = $request['datetime'];
         $date = substr($datetime, 0, 10);
         $time = substr($datetime, 11, 15);
-        $holidays = Yasumi::create('Japan', date('Y'), 'ja_JP');
         $monthCount = date('t', strtotime($date));
         $nonDayDate = substr($date, 0, 8); // 例）2022/05/
 
         if ($request['isBulkWeekend']) {
-            $insertDatetimes = [];
-            for ($i = 1; $i <= $monthCount; $i++) {
-                $week = (int)date('w', strtotime($nonDayDate. $i));
-                if (!($week === 0 || $week === 6)) continue;
-                if ($holidays->isHoliday(new \DateTime($nonDayDate . $i))) continue;
-                foreach (ConstReservation::AVAILABLE_TIME_LIST as $time) {
-                    $insertDatetimes[] = [
-                        'available_date' => $nonDayDate. $i,
-                        'available_time' => $time,
-                    ];
-                }
-            }
-            $this->availableReservationDatetimeRepository->bulkInsert($insertDatetimes);
+            $targetInsertWeeks = [6, 0];
+            $this->bulkInsert($monthCount, $nonDayDate, $targetInsertWeeks);
         } elseif ($request['isBulkMonth']) {
-            $insertDatetimes = [];
-            for ($i = 1; $i <= $monthCount; $i++) {
-                if ($holidays->isHoliday(new \DateTime($nonDayDate . $i))) continue;
-                foreach (ConstReservation::AVAILABLE_TIME_LIST as $time) {
-                    $insertDatetimes[] = [
-                        'available_date' => $nonDayDate. $i,
-                        'available_time' => $time,
-                    ];
-                }
-            }
-            $this->availableReservationDatetimeRepository->bulkInsert($insertDatetimes);
+            $targetInsertWeeks = [0, 1, 2, 3, 4, 5, 6];
+            $this->bulkInsert($monthCount, $nonDayDate, $targetInsertWeeks);
         } elseif ($request['isBulkDay']) {
             $insertDatetimes = $this->availableReservationDatetimeService->getInsertDatetimes($date);
             $this->availableReservationDatetimeRepository->bulkInsert($insertDatetimes);
@@ -209,5 +188,25 @@ class ReservationService
                 'available_time' => $time,
             ]);
         }
+    }
+
+    private function bulkInsert($monthCount, $nonDayDate, $targetInsertWeeks)
+    {
+        $holidays = Yasumi::create('Japan', date('Y'), 'ja_JP');
+
+        $insertDatetimes = [];
+        for ($i = 1; $i <= $monthCount; $i++) {
+            $week = (int)date('w', strtotime($nonDayDate. $i));
+            if (!(in_array($week, $targetInsertWeeks, true))) continue;
+            if ($holidays->isHoliday(new \DateTime($nonDayDate . $i))) continue;
+            foreach (ConstReservation::AVAILABLE_TIME_LIST as $time) {
+                $insertDatetimes[] = [
+                    'available_date' => $nonDayDate. $i,
+                    'available_time' => $time,
+                ];
+            }
+        }
+        
+        $this->availableReservationDatetimeRepository->bulkInsert($insertDatetimes);
     }
 }

@@ -14,7 +14,7 @@ class ReservationRepository
         return AvailableReservationDatetime::query()
             ->select(DB::raw('
             available_date
-            ,array_agg(available_time) available_times
+            ,array_agg(available_time order by available_time) available_times
         '))
             ->whereNotExists(function($query) {
             $query->select(DB::raw(1))
