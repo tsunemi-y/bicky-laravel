@@ -1,62 +1,47 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+名前
+====
+bicky
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 概要
+予約機能付きのHPです。
+発達に遅れがある児童の訓練を行う事業のHPです。
 
-## About Laravel
+当該システムは、すでに利用されており、安定して稼働しています。
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 詳細
+ユーザ画面と管理画面があります。
+主な機能は、以下となります。
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### ユーザ画面 
+- ユーザ登録機能
+- ログイン機能
+- 予約機能
+- 予約キャンセル機能
+- 予約内容確認内容をユーザにメール送信する機能
+- 予約内容確認内容を管理者にLINE送信する機能
+- 予約内容をGoogle Calendarに連携する機能
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 管理画面
+- 予約可能時間登録（ここで登録した日時がユーザ予約画面にて、予約可能となる）
+- 領収書メール送信機能
+- 評価表メール送信機能（管理者が選択した添付ファイルをPDFに変換して送信）
+- 毎朝定刻に、その日の予約内容を管理者にLINE送信する機能
 
-## Learning Laravel
+## 使用技術
+- Laravel
+- jQuery（ユーザ画面）
+- React.js（管理画面）
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+ユーザ画面と管理画面のJavascriptライブラリが異なる理由は、工数削減のためです。
+今後、ユーザ画面もReact.jsにリプレイス予定です。
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 実装の際に意識したこと
+- コントローラーのスリム化
+  - ビジネスロジックをService層に記載
+  - バリデーションは、FormRequestを使用
+  - コントローラーで使用するサービスクラスプロパティをコンストラクタで生成（依存性注入とサービスコンテナを利用）
+- データアクセスロジックをビジネスロジックと分離するため、レポジトリパターンの採用
+- 保守性の強化
+  - 複数箇所で利用される処理の関数化
+  - ネスト削減のため、ガード節を採用
+  - マジックナンバー、再利用する値の定数化
